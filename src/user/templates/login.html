@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+<!-- 扩展css -->
+{% block ext_css %}
+<style>
+  h2 {
+    margin: 30px 0;
+  }
+</style>
+{% endblock %}
+
+<!-- 内容区 -->
+{% block content %}
+
+<h2>欢迎回来</h2>
+
+<hr />
+
+{% if error %}
+<div class="alert alert-danger" role="alert">
+  <h4 class="alert-danger">警告!</h4>
+  <p>{{ error }}</p>
+</div>
+{% endif %}
+
+<form method="POST" action="/user/login">
+    <div class="form-group row">
+      <label class="col-sm-2 col-form-label">昵称：</label>
+      <div class="col-sm-6">
+        <input type="text" class="form-control" placeholder="请输入昵称" name="nickname" />
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label class="col-sm-2 col-form-label">密码：</label>
+      <div class="col-sm-6">
+        <input type="password" class="form-control" placeholder="请输入密码" name="password" />
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <div class="offset-md-2 col-sm-6">
+        <button type="submit" class="btn btn-primary mb-2">登录</button>
+      </div>
+    </div>
+  </form>
+
+{% endblock %}

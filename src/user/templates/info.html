@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+<!-- 扩展css -->
+{% block ext_css %}
+<style>
+  h2 {
+    margin: 30px 0;
+  }
+</style>
+{% endblock %}
+
+
+<!-- 内容区 -->
+{% block content %}
+
+<h2>用户信息</h2>
+<hr>
+
+<div class="jumbotron transparent-bg">
+
+    <img src="{{ user.avatar }}" width="200px">
+
+    <br>
+    <br>
+
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item item">
+            昵称：{{ user.nickname }}
+        </li>
+        <li class="list-group-item item">性别：
+            {% if user.gender == 'male' %}
+                小哥哥
+            {% elif user.gender == 'female' %}
+                小姐姐
+            {% else %}
+                你猜
+            {% endif %}
+        </li>
+        <li class="list-group-item item">生日：{{ user.birthday }}</li>
+        <li class="list-group-item item">城市：{{ user.city }}</li>
+        <li class="list-group-item item">简介：{{ user.bio or "这家伙很懒，什么都没留下" }}</li>
+    </ul>
+</div>
+
+{% endblock %}
