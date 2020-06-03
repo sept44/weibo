@@ -1,0 +1,88 @@
+{% extends "base.html" %} {% block ext_css %}
+<style>
+  h2 {
+    margin: 30px 0;
+  }
+</style>
+{% endblock %}
+
+<!-- 内容区 -->
+{% block content %}
+
+<h2>欢迎注册</h2>
+
+<hr />
+
+<form>
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">昵称：</label>
+    <div class="col-sm-6">
+      <input type="text" class="form-control" placeholder="请输入昵称" name="nickname" />
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">密码：</label>
+    <div class="col-sm-6">
+      <input type="password" class="form-control" placeholder="请输入密码" name="password" />
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">性别：</label>
+    <div class="col-sm-6">
+      <select class="custom-select" name="gender">
+        <option value="unknow">保密</option>
+        <option value="male">小哥哥</option>
+        <option value="female">小姐姐</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">城市：</label>
+    <div class="col-sm-6">
+      <select class="custom-select" name="city">
+        <option value="上海">上海</option>
+        <option value="北京">北京</option>
+        <option value="深圳">深圳</option>
+        <option value="哈尔滨">哈尔滨</option>
+        <option value="合肥">合肥</option>
+        <option value="武汉">武汉</option>
+        <option value="长沙">长沙</option>
+        <option value="西安">西安</option>
+        <option value="成都">成都</option>
+        <option value="乌鲁木齐">乌鲁木齐</option>
+        <option value="拉萨">拉萨</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">头像：</label>
+    <div class="col-sm-6">
+      <input type="file" accept="image/*" class="" name="avatar" />
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">生日：</label>
+    <div class="col-sm-6">
+      <input type="date" class="form-control" name="birthday" />
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">个人简介：</label>
+    <div class="col-sm-6">
+      <textarea class="form-control" rows="3" placeholder="介绍一下自己吧" name="bio"></textarea>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <div class="offset-md-2 col-sm-6">
+      <button type="submit" class="btn btn-primary mb-2">提交</button>
+    </div>
+  </div>
+</form>
+{% endblock %}
