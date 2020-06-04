@@ -1,4 +1,6 @@
 import os
+import random
+import string
 from hashlib import sha256
 from functools import wraps
 
@@ -45,3 +47,18 @@ def login_required(view_func):
         else:
             return redirect('/user/login')
     return wrapper
+
+
+def fake_word():
+    '''伪造一个单词'''
+    n_chars = random.randint(3, 6)
+    chars = random.choices(string.ascii_lowercase, k=n_chars)
+    return ''.join(chars)
+
+
+def fake_sentence():
+    '''伪造一个句子'''
+    n_words = random.randint(10, 20)
+    sentence = ' '.join(fake_word() for i in range(n_words))
+    sentence = sentence.capitalize() + '.'
+    return sentence

@@ -52,7 +52,7 @@
             {% if loop.index == page %}
             <li class="active"><a href="#">{{ loop.index }}</a></li>
             {% else %}
-            <li><a href="/weibo?page={{ loop.index }}">{{ loop.index }}</a></li>
+            <li><a href="/weibo/list?page={{ loop.index }}">{{ loop.index }}</a></li>
             {% endif %}
         {% endfor %}
     </ul>
