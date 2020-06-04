@@ -57,7 +57,9 @@ def delete_weibo():
 @weibo_bp.route('/show')
 def show_weibo():
     '''查看微博'''
-    return 'show_weibo'
+    wid = int(request.args.get('wid'))
+    weibo = Weibo.query.get(wid)
+    return render_template('show.html', weibo=weibo)
 
 
 @weibo_bp.route('/list')
