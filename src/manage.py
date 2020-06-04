@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 from flask import Flask
+from flask import redirect
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-from flask import render_template
 
 from libs.db import db
 from libs import config
@@ -28,7 +28,7 @@ app.register_blueprint(weibo_bp)
 
 @app.route('/')
 def home():
-    return render_template('base.html')
+    return redirect('/weibo/list')
 
 
 if __name__ == "__main__":

@@ -11,6 +11,7 @@ class Weibo(db.Model):
     uid = db.Column(db.Integer)                   # 对应的用户 ID
     content = db.Column(db.Text)                  # 微博内容
     created = db.Column(db.DateTime)              # 微博创建时间
+    updated = db.Column(db.DateTime)              # 微博修改时间
 
     @property
     def user(self):

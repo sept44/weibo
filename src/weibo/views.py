@@ -1,4 +1,5 @@
 import datetime
+from math import ceil
 
 from flask import Blueprint
 from flask import render_template
@@ -7,6 +8,7 @@ from flask import request
 from flask import session
 
 from libs.db import db
+from libs.config import PER_PAGE
 from weibo.models import Weibo
 from libs.utils import login_required
 
@@ -24,7 +26,7 @@ def post_weibo():
         if not content:
             return render_template('post.html', error='微博内容不能为空')
         uid = session['uid']
-        created = datetime.datetime.now()
+        created = updated = datetime.datetime.now()  # 创建时间和修改时间相同
         weibo = Weibo(uid=uid, content=content, created=created)
         db.session.add(weibo)
 
@@ -49,7 +51,8 @@ def edit_weibo():
         content = request.form.get('content')
 
         # 修改当前微博
-        Weibo.query.filter_by(id=wid).update({Weibo.content: content})
+        updated = datetime.datetime.now()
+        Weibo.query.filter_by(id=wid).update({Weibo.content: content, Weibo.updated: updated})
 
         try:
             db.session.commit()
@@ -94,3 +97,16 @@ def show_weibo():
 @weibo_bp.route('/list')
 def weibo_list():
     '''微博列表'''
+    page = int(request.args.get('page', 1))  # 页码
+
+    # 取出当前页需要显示的微博
+    offset = (page - 1) * PER_PAGE  # 要跳过的微博
+
+    # 将所有微博按 updated 的降序排列
+    weibo_list = Weibo.query.order_by(Weibo.updated.desc()).limit(PER_PAGE).offset(offset)
+
+    # 计算总页数：总页数 = math.ceil(总条数 / 30)
+    total = Weibo.query.count()
+    n_page = ceil(total / PER_PAGE)
+
+    return render_template('index.html', weibo_list=weibo_list, n_page=n_page, page=page)
