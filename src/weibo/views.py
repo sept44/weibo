@@ -33,7 +33,7 @@ def post_weibo():
         except Exception as e:
             db.session.rollback()
             print(e)
-            return render_template('post.html', error='服务器内容不错误')
+            return render_template('post.html', error='服务器内部错误')
         else:
             return redirect(f'/weibo/show?wid={weibo.id}')
     else:
@@ -44,14 +44,43 @@ def post_weibo():
 @login_required
 def edit_weibo():
     '''编辑微博'''
-    return render_template('edit.html')
+    if request.method == 'POST':
+        wid = request.form.get('wid')
+        content = request.form.get('content')
+
+        # 修改当前微博
+        Weibo.query.filter_by(id=wid).update({Weibo.content: content})
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            print(e)
+            return render_template('edit.html', error='服务器内部错误')
+        else:
+            return redirect(f'/weibo/show?wid={wid}')
+
+    else:
+        wid = int(request.args.get('wid'))
+        weibo = Weibo.query.get(wid)
+        return render_template('edit.html', weibo=weibo)
 
 
 @weibo_bp.route('/delete')
 @login_required
 def delete_weibo():
     '''删除微博'''
-    return redirect('/')
+    wid = int(request.args.get('wid'))
+    Weibo.query.filter_by(id=wid).delete()
+
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        print(e)
+        return redirect(f'/weibo/show?wid={wid}&error=服务器内部错误')
+    else:
+        return redirect('/')
 
 
 @weibo_bp.route('/show')
