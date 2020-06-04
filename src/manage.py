@@ -8,6 +8,7 @@ from flask import render_template
 from libs.db import db
 from libs import config
 from user.views import user_bp
+from weibo.views import weibo_bp
 
 # 初始化 App
 app = Flask(__name__)
@@ -22,6 +23,7 @@ manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
 app.register_blueprint(user_bp)
+app.register_blueprint(weibo_bp)
 
 
 @app.route('/')
