@@ -1,5 +1,6 @@
 import os
 from hashlib import sha256
+from functools import wraps
 
 from flask import session
 from flask import redirect
@@ -37,6 +38,7 @@ def save_avatar(nickname, avatar):
 
 def login_required(view_func):
     '''登录验证装饰器'''
+    @wraps(view_func)
     def wrapper(*args, **Kwargs):
         if isinstance(session.get('uid'), int):
             return view_func(*args, **Kwargs)

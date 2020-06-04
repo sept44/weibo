@@ -1,29 +1,63 @@
+import datetime
+
 from flask import Blueprint
+from flask import render_template
+from flask import redirect
+from flask import request
+from flask import session
 
+from libs.db import db
 from weibo.models import Weibo
+from libs.utils import login_required
 
 
-weibo_bp = Blueprint('weibo', import_name='weibo', url_prefix='/weibo', template_folder='./')
+weibo_bp = Blueprint('weibo', import_name='weibo',
+                     url_prefix='/weibo', template_folder='./templates')
 
 
-@weibo_bp.route('/post')
+@weibo_bp.route('/post', methods=('GET', 'POST'))
+@login_required
 def post_weibo():
     '''发布微博'''
+    if request.method == "POST":
+        content = request.form.get('content', '').strip()
+        if not content:
+            return render_template('post.html', error='微博内容不能为空')
+        uid = session['uid']
+        created = datetime.datetime.now()
+        weibo = Weibo(uid=uid, content=content, created=created)
+        db.session.add(weibo)
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            print(e)
+            return render_template('post.html', error='服务器内容不错误')
+        else:
+            return redirect(f'/weibo/show?wid={weibo.id}')
+    else:
+        return render_template('post.html')
 
 
-@weibo_bp.route('/edit')
+@weibo_bp.route('/edit', methods=('GET', 'POST'))
+@login_required
 def edit_weibo():
     '''编辑微博'''
+    return render_template('edit.html')
 
 
 @weibo_bp.route('/delete')
+@login_required
 def delete_weibo():
     '''删除微博'''
+    return redirect('/')
 
 
 @weibo_bp.route('/show')
 def show_weibo():
     '''查看微博'''
+    return 'show_weibo'
 
 
 @weibo_bp.route('/list')
