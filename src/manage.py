@@ -9,6 +9,7 @@ from libs.db import db
 from libs import config
 from user.views import user_bp
 from weibo.views import weibo_bp
+from comment.views import comment_bp
 from libs.utils import fake_sentence
 from libs.utils import fake_word
 
@@ -26,6 +27,7 @@ manager.add_command('db', MigrateCommand)
 
 app.register_blueprint(user_bp)
 app.register_blueprint(weibo_bp)
+app.register_blueprint(comment_bp)
 
 
 @app.route('/')
