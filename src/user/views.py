@@ -38,7 +38,7 @@ def register():
         avatar_url = utils.save_avatar(nickname, avatar)  # 保存头像，并返回头像网址
 
         user = User(nickname=nickname, password=safe_password, gender=gender,
-                    city=city,avatar=avatar_url,birthday=birthday,bio=bio)
+                    city=city, avatar=avatar_url, birthday=birthday, bio=bio)
 
         db.session.add(user)
         try:
@@ -80,8 +80,8 @@ def login():
 
 
 @user_bp.route('/info')
-@utils.login_required
 def info():
     '''显示当前用户的信息'''
-    user = User.query.get(session['uid'])
+    uid = int(request.args.get('uid', 0)) or session['uid']
+    user = User.query.get(uid)
     return render_template('info.html', user=user)
