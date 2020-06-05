@@ -27,7 +27,7 @@ def post_weibo():
             return render_template('post.html', error='微博内容不能为空')
         uid = session['uid']
         created = updated = datetime.datetime.now()  # 创建时间和修改时间相同
-        weibo = Weibo(uid=uid, content=content, created=created)
+        weibo = Weibo(uid=uid, content=content, created=created, updated=updated)
         db.session.add(weibo)
 
         try:
@@ -108,5 +108,8 @@ def weibo_list():
     # 计算总页数：总页数 = math.ceil(总条数 / 30)
     total = Weibo.query.count()
     n_page = ceil(total / PER_PAGE)
+    min_page = (page - 5) if page > 5 else 1
+    max_page = min((page + 5), n_page)
 
-    return render_template('index.html', weibo_list=weibo_list, n_page=n_page, page=page)
+    return render_template('index.html', weibo_list=weibo_list,
+                            min_page=min_page, max_page=max_page, page=page)

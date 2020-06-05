@@ -1,61 +1,63 @@
 {% extends "base.html" %}
 
+<!-- 内容区 -->
 {% block content %}
 
 <!-- 显示当前页的微博 -->
 {% for wb in weibo_list %}
-<div class="alert alert-primary" >
-    <div class="row">
-        <div class="col-sm-10">
-            <a href="/user/info?uid={{ wb.uid }}">
-                <strong>{{ wb.user.nickname }}</strong>
-            </a>：
-        </div>
-
-        {% if 'uid' in session and session['uid'] == wb.uid %}
-        <div class="col-sm-2 text-right">
-            <a href="/weibo/edit?wid={{ wb.id }}">编辑</a>
-            <a href="/weibo/delete?wid={{ wb.id }}">删除</a>
-        </div>
-        {% endif %}
+<div class="alert alert-primary">
+  <div class="row">
+    <div class="col-sm-10">
+      <a class="text-body" href="/user/info?uid={{ wb.uid }}">
+        <strong>{{ wb.user.nickname }}：</strong>
+      </a>
     </div>
-    <br>
-    <span>{{ wb.content | replace('\n', '<br>') | safe }}</span>
+
+    {% if 'uid' in session and session['uid'] == wb.uid %}
+    <div class="col-sm-2 text-right">
+      <a href="/weibo/edit?wid={{ wb.id }}">编辑</a>
+      <a class="text-danger" href="/weibo/delete?wid={{ wb.id }}">删除</a>
+    </div>
+    {% endif %}
+  </div>
+  <br />
+  <span>{{ wb.content | replace('\n', '<br />') | safe }}</span>
 </div>
 
-<div class="breadcrumb text-right transparent-bg">
-    <li class="active">{{ wb.updated }}</li>
+<ol class="breadcrumb transparent-bg">
+  <li class="breadcrumb-item text-secondary">{{ wb.updated }}</li>
 
-    <li>
-        <a class="btn btn-success btn-sm" href="/weibo/like?wid={{ wb.id }}">
-            <span class="glyphicon glyphicon-heart"></span>
-            &nbsp;
-            <span class="badge"> 0 </span>
-        </a>
-    </li>
+  <li class="breadcrumb-item">
+    <a class="badge badge-info" href="/weibo/like?wid={{ wb.id }}">0</a>
+  </li>
 
-    <li>
-        <a class="btn btn-primary btn-sm" href="/weibo/show?wid={{ wb.id }}">查看</a>
-    </li>
-</div>
+  <li class="breadcrumb-item">
+    <a class="badge badge-info" href="/weibo/show?wid={{ wb.id }}">查看</a>
+  </li>
+</ol>
 
-{% if not loop.last %}<hr>{% endif %}
-
-{% else %}
+{% if not loop.last %}
+<hr />
+{% endif %} {% else %}
 <div>当前还没有人发过微博，您来抢沙发吧！</div>
 {% endfor %}
 
 <!-- 显示页码 -->
 <nav aria-label="Page navigation">
-    <ul class="pagination">
-        {% for p in range(n_page) %}
-            {% if loop.index == page %}
-            <li class="active"><a href="#">{{ loop.index }}</a></li>
-            {% else %}
-            <li><a href="/weibo/list?page={{ loop.index }}">{{ loop.index }}</a></li>
-            {% endif %}
-        {% endfor %}
-    </ul>
+  <ul class="pagination">
+    {% for p in range(min_page, max_page + 1) %}
+      <!-- 当前要不需要跳转链接 -->
+      {% if p == page %}
+      <li class="page-item">
+        <a class="page-link">{{ p }}</a>
+      </li>
+      {% else %}
+      <li class="page-item">
+        <a class="page-link" href="/weibo/list?page={{ p }}">{{ p }}</a>
+      </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
 </nav>
 
 {% endblock %}

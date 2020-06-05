@@ -11,7 +11,7 @@
         padding-top: 70px;
       }
       h2 {
-        margin: 30px 0;
+        margin: 20px 0;
       }
       .transparent-bg {
         background-color: transparent;
@@ -47,12 +47,21 @@
           </ul>
 
           <ul class="nav navbar-nav navbar-right">
+            {% if 'uid' in session %}
+            <li class="nav-item active">
+              <a class="nav-link" href="/weibo/post">发微博</a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link text-danger" href="/user/logout">退出</a>
+            </li>
+            {% else %}
             <li class="nav-item active">
               <a class="nav-link" href="/user/register">注册</a>
             </li>
             <li class="nav-item active">
               <a class="nav-link" href="/user/login">登陆</a>
             </li>
+            {% endif %}
           </ul>
         </div>
       </div>
