@@ -6,10 +6,12 @@ from flask import render_template
 from flask import redirect
 from flask import request
 from flask import session
+from sqlalchemy.exc import IntegrityError
 
 from libs.db import db
 from libs.config import PER_PAGE
 from weibo.models import Weibo
+from weibo.models import Like
 from comment.models import Comment
 from libs.utils import login_required
 
@@ -79,6 +81,11 @@ def delete_weibo():
     if weibo.uid != session['uid']:
         return redirect(f'/weibo/show?wid={wid}&error=您没有权限删除别人的微博')
 
+    # 关联删除当前微博的评论和赞
+    Comment.query.filter_by(wid=wid).delete()
+    Like.query.filter_by(wid=wid).delete()
+    db.session.delete(weibo)
+
     try:
         db.session.commit()
     except Exception as e:
@@ -99,7 +106,9 @@ def show_weibo():
     # 取出当前微博下所有的评论
     comments = Comment.query.filter_by(wid=wid).order_by(Comment.created.desc())
 
-    return render_template('show.html', weibo=weibo, comments=comments, error=error)
+    is_liked = Like.is_liked(session['uid'], wid)
+
+    return render_template('show.html', weibo=weibo, comments=comments, is_liked=is_liked, error=error)
 
 
 @weibo_bp.route('/list')
@@ -121,3 +130,31 @@ def weibo_list():
 
     return render_template('index.html', weibo_list=weibo_list,
                            min_page=min_page, max_page=max_page, page=page)
+
+
+@weibo_bp.route('/like')
+@login_required
+def like():
+    uid = session['uid']
+    wid = int(request.args.get('wid'))
+    from_url = request.args.get('from')
+
+    like_wb = Like(uid=uid, wid=wid)
+    Weibo.query.filter_by(id=wid).update({'n_like': Weibo.n_like + 1})  # 为微博的点赞数加一
+
+    db.session.add(like_wb)
+
+    try:
+        db.session.commit()
+    except IntegrityError:
+        # 创建失败说明数据已存在，需要取消点赞
+        db.session.rollback()
+
+        Like.query.filter_by(uid=uid, wid=wid).delete()
+        Weibo.query.filter_by(id=wid).update({'n_like': Weibo.n_like - 1})  # 为微博的点赞数减一
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
+    return redirect(from_url)

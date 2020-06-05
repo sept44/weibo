@@ -45,8 +45,10 @@ def post():
 def delete():
     cid = int(request.args.get('cid'))
     cmt = Comment.query.get(cid)
+
     if cmt.uid == session['uid']:
         db.session.delete(cmt)
+        Comment.query.filter_by(cid=cid).update({'cid': 0})  # 将本评论的回复指向微博本身
         try:
             db.session.commit()
         except Exception as e:

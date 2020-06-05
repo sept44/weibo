@@ -37,7 +37,12 @@
 
 <!-- 微博状态 -->
 <div class="text-right transparent-bg">
-    {{ weibo.created }}
+    {{ weibo.created }} |
+    {% if is_liked %}
+    <a href="/weibo/like?wid={{ weibo.id }}&from={{ request.full_path }}">取消点赞 {{weibo.n_like}}</a>
+    {% else %}
+    <a href="/weibo/like?wid={{ weibo.id }}&from={{ request.full_path }}">点赞 {{weibo.n_like}}</a>
+    {% endif %}
 </div>
 
 <!-- 评论框 -->
@@ -86,6 +91,12 @@
             <br>
             <div class="text-gray">{{ cmt.created }}</div>
         </div>
+
+        {% if 'uid' in session and session['uid'] == cmt.uid %}
+        <div class="col-sm-2 text-right">
+          <a class="text-danger" href="/comment/delete?cid={{ cmt.id }}">删除</a>
+        </div>
+        {% endif %}
 
         <!-- 回复框 -->
         <form class="form-inline col-sm-5 text-right" action="/comment/post" method="POST">

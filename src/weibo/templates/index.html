@@ -5,7 +5,7 @@
 
 <!-- 显示当前页的微博 -->
 {% for wb in weibo_list %}
-<div class="alert alert-primary">
+<div class="alert alert-primary" id="wb{{ wb.id }}">
   <div class="row">
     <div class="col-sm-10">
       <a class="text-body" href="/user/info?uid={{ wb.uid }}">
@@ -28,7 +28,7 @@
   <li class="breadcrumb-item text-secondary">{{ wb.updated }}</li>
 
   <li class="breadcrumb-item">
-    <a class="badge badge-info" href="/weibo/like?wid={{ wb.id }}">0</a>
+    <a class="badge badge-info" href="/weibo/like?wid={{ wb.id }}&from={{ request.full_path }}#wb{{wb.id}}">{{ wb.n_like }}</a>
   </li>
 
   <li class="breadcrumb-item">
