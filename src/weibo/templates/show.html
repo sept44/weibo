@@ -74,7 +74,7 @@
             <!-- 评论回复的处理 -->
             <a href="/user/info?uid={{ cmt.uid }}">{{ cmt.user.nickname }}</a>
             对
-            <a href="/user/info?uid={{ cmt.reply_comment.uid }}">{{ cmt.reply_comment.nickname }}</a>
+            <a href="/user/info?uid={{ cmt.reply_comment.uid }}">{{ cmt.reply_comment.user.nickname }}</a>
             说:
         {% endif %}
     </div>
