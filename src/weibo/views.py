@@ -10,6 +10,7 @@ from flask import session
 from libs.db import db
 from libs.config import PER_PAGE
 from weibo.models import Weibo
+from comment.models import Comment
 from libs.utils import login_required
 
 
@@ -74,7 +75,9 @@ def edit_weibo():
 def delete_weibo():
     '''删除微博'''
     wid = int(request.args.get('wid'))
-    Weibo.query.filter_by(id=wid).delete()
+    weibo = Weibo.query.get(wid)
+    if weibo.uid != session['uid']:
+        return redirect(f'/weibo/show?wid={wid}&error=您没有权限删除别人的微博')
 
     try:
         db.session.commit()
@@ -90,8 +93,13 @@ def delete_weibo():
 def show_weibo():
     '''查看微博'''
     wid = int(request.args.get('wid'))
-    weibo = Weibo.query.get(wid)
-    return render_template('show.html', weibo=weibo)
+    error = request.args.get('error')
+    weibo = Weibo.query.get(wid)  # 取出当前微博
+
+    # 取出当前微博下所有的评论
+    comments = Comment.query.filter_by(wid=wid).order_by(Comment.created.desc())
+
+    return render_template('show.html', weibo=weibo, comments=comments, error=error)
 
 
 @weibo_bp.route('/list')
@@ -112,4 +120,4 @@ def weibo_list():
     max_page = min((page + 5), n_page)
 
     return render_template('index.html', weibo_list=weibo_list,
-                            min_page=min_page, max_page=max_page, page=page)
+                           min_page=min_page, max_page=max_page, page=page)
