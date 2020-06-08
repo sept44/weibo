@@ -8,6 +8,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.exc import MultipleResultsFound
 
 from .models import User
+from .models import Follow
 from libs.db import db
 from libs import utils
 
@@ -82,6 +83,40 @@ def login():
 @user_bp.route('/info')
 def info():
     '''显示当前用户的信息'''
-    uid = int(request.args.get('uid', 0)) or session['uid']
-    user = User.query.get(uid)
-    return render_template('info.html', user=user)
+    uid = session['uid']
+    other_uid = int(request.args.get('uid', 0))
+
+    if other_uid:
+        # 查看其他人的信息页
+        user = User.query.get(other_uid)
+        is_followed = Follow.is_followed(uid, other_uid)
+    else:
+        # 查看个人的信息页
+        user = User.query.get(uid)
+        is_followed = None
+
+    return render_template('info.html', user=user, is_followed=is_followed)
+
+
+@user_bp.route('/follow')
+def follow():
+    '''关注 / 取消关注'''
+    fid = int(request.args.get('fid'))  # 从页面获取被关注者的 UID
+    uid = session['uid']
+
+    follow_relation = Follow(uid=uid, fid=fid)
+    db.session.add(follow_relation)
+
+    try:
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()  # 发生冲突时，说明已经关注过此人，需要取消关注
+
+        Follow.query.filter_by(uid=uid, fid=fid).delete()  # 取消关注，删除两人的关系
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
+
+    return redirect(f'/user/info?uid={fid}')

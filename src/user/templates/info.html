@@ -16,6 +16,15 @@
     <ul class="list-group list-group-flush">
         <li class="list-group-item item">
             昵称：{{ user.nickname }}
+            &nbsp;&nbsp;&nbsp;
+            <!-- 用户已登陆，且当前页面是在查看别人的信息时，显示下面链接 -->
+            {% if 'uid' in session and session['uid'] != user.id %}
+                {% if is_followed %}
+                <a class="text-danger" href="/user/follow?fid={{user.id}}">取消关注</a>
+                {% else %}
+                <a class="text-primary" href="/user/follow?fid={{user.id}}">关注</a>
+                {% endif %}
+            {% endif %}
         </li>
         <li class="list-group-item item">性别：
             {% if user.gender == 'male' %}
