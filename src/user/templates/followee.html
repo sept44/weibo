@@ -16,7 +16,7 @@
     </thead>
 
     <tbody>
-        {% for user in fans %}
+        {% for user in followee %}
         <tr>
             <td><a href="/user/info?uid={{ user.id }}">{{ user.nickname }}</a></td>
             <td>{{ '小哥哥' if user.gender == 'male' else '小姐姐' }}</td>

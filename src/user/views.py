@@ -120,3 +120,35 @@ def follow():
             db.session.rollback()
 
     return redirect(f'/user/info?uid={fid}')
+
+
+@user_bp.route('/fans')
+@utils.login_required
+def fans():
+    '''查看自己的粉丝列表'''
+    uid = session['uid']
+
+    # select uid from follow where fid=7;
+    fans_uid_list = Follow.query.filter_by(fid=uid).values('uid')  # 取出所有关注者的 UID
+    fans_uid_list = [f[0] for f in fans_uid_list]  # 将二维列表整理成一维列表
+
+    # 取出所有关注者的 User 对象
+    # select * from user where id in fans_uid_list
+    fans = User.query.filter(User.id.in_(fans_uid_list))
+    return render_template('fans.html', fans=fans)
+
+
+@user_bp.route('/followee')
+@utils.login_required
+def followee():
+    '''查看自己关注的人'''
+    uid = session['uid']
+
+    # select fid from follow where uid=7;
+    follow_uid_list = Follow.query.filter_by(uid=uid).values('fid')  # 取出所有自己关注的 UID
+    follow_uid_list = [f[0] for f in follow_uid_list]  # 将二维列表整理成一维列表
+
+    # 取出所有关注者的 User 对象
+    # select * from user where id in follow_uid_list
+    followee = User.query.filter(User.id.in_(follow_uid_list))
+    return render_template('followee.html', followee=followee)

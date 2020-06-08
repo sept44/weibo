@@ -33,16 +33,16 @@
           </a>
 
           <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            <li class="nav-item active">
+            <li class="nav-item {% if request.path in ['/', '/weibo/list'] %}active{% endif %}">
               <a class="nav-link" href="/">首页</a>
             </li>
 
-            <li class="nav-item">
-              <a class="nav-link" href="/">关注的人</a>
+            <li class="nav-item {% if request.path == '/user/followee' %}active{% endif %}">
+              <a class="nav-link" href="/user/followee">关注的人</a>
             </li>
 
-            <li class="nav-item">
-              <a class="nav-link" href="/">粉丝列表</a>
+            <li class="nav-item {% if request.path == '/user/fans' %}active{% endif %}">
+              <a class="nav-link" href="/user/fans">粉丝列表</a>
             </li>
           </ul>
 
